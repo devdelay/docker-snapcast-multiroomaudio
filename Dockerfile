@@ -22,9 +22,30 @@ RUN apt-get -qq update &&\
     mkdir -p /var/run/dbus &&\
     chown messagebus:messagebus /var/run/dbus &&\
     dbus-uuidgen --ensure &&\
+    
+# Snapcastr
+    install_packages python3-dev \
+    python3-pip \
+    python3-virtualenv \
+    python3-setuptools \
+    git \
+    gcc \
+    libffi-dev \
+    libssl-dev \
+    python3-venv
+
+RUN pip3 install wheel
+
+RUN pip3 install Flask snapcast poetry
+
+RUN cd /usr/src/ && \
+    git clone https://github.com/xkonni/snapcastr && \
+    cd snapcastr && \
+    poetry build && \
+    pip3 install dist/*.tar.gz
 
 # cleanup
-    apt-get -qq autoremove &&\
+RUN apt-get -qq autoremove &&\
     apt-get -qq clean &&\
     rm /root/out.deb &&\
     rm -rf /var/lib/apt/lists/*
@@ -50,5 +71,8 @@ EXPOSE 6000-6005/udp
 
 # Avahi port
 EXPOSE 5353
+
+# Snapcastr port
+EXPOSE 80/tcp
 
 ENTRYPOINT ["/start.sh"]
