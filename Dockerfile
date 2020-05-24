@@ -1,9 +1,4 @@
-# Dockerfile for a Multi-Room-Audio-Streaming-Server
-
-#FROM blitznote/debootstrap-amd64:16.04
-FROM ubuntu:16.04
-
-MAINTAINER s1lvester <hello@s1lvester.de>
+FROM python:3.7
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -24,7 +19,7 @@ RUN apt-get -qq update &&\
     dbus-uuidgen --ensure &&\
     
 # Snapcastr
-    install_packages python3-dev \
+    apt-get install -y python3-dev \
     python3-pip \
     python3-virtualenv \
     python3-setuptools \
@@ -32,7 +27,9 @@ RUN apt-get -qq update &&\
     gcc \
     libffi-dev \
     libssl-dev \
-    python3-venv
+    python3-venv && \
+    cd /usr/local/bin && \
+    pip3 install --upgrade pip
 
 RUN pip3 install wheel
 
